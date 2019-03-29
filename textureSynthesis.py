@@ -18,6 +18,9 @@ def textureSynthesis(exampleMapPath, outputSize, searchKernelSize, savePath, att
     #PARAMETERS
     PARM_attenuation = attenuation
     PARM_truncation = truncation
+
+    checkIfDirectoryExists(savePath)
+
     #write
     text_file = open(savePath + 'params.txt', "w")
     text_file.write("Attenuation: %d \n Truncation: %f \n KernelSize: %d" % (PARM_attenuation, PARM_truncation, searchKernelSize))
@@ -86,15 +89,15 @@ def textureSynthesis(exampleMapPath, outputSize, searchKernelSize, savePath, att
         canvas[candidate_row, candidate_col, :] = chosenPixel
         filledMap[candidate_row, candidate_col] = 1
 
-        #show live update
-        plt.pyplot.imshow(canvas)
-        clear_output(wait=True)
-        display(plt.pyplot.show())
-
         resolved_pixels = resolved_pixels+1
         
         #save image
         if snapshots:
+            #show live update
+            plt.pyplot.imshow(canvas)
+            clear_output(wait=True)
+            display(plt.pyplot.show())
+
             img = Image.fromarray(np.uint8(canvas*255))
             img = img.resize((300, 300), resample=0, box=None)
             img.save(savePath + 'out' + str(resolved_pixels-9) + '.jpg')
@@ -230,3 +233,7 @@ def gkern(kern_x, kern_y, nsig=3):
     kernel = kernel_raw/kernel_raw.sum()
     
     return kernel
+
+def checkIfDirectoryExists(outputPath):
+    if not os.path.exists(outputPath):
+        os.makedirs(outputPath)
